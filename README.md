@@ -10,14 +10,14 @@ Each project you work on should have a set of dependencies (other packages) need
 A set of projects and virtual environments might look like this in an abstract sense:
 
 * Project A
- * Virtual environment A1
- * Virtual environment A2
+  * Virtual environment A1
+  * Virtual environment A2
 * Project B
- * Virtual environment B
+  * Virtual environment B
 * Project C
- * Virtual environment C1
- * Virtual environment C2
- * Virtual environment C3
+  * Virtual environment C1
+  * Virtual environment C2
+  * Virtual environment C3
 
 ## The tools:
 * [`pyenv`](https://github.com/pyenv/pyenv): Used only for Python version installation and organization (**not** used for virtual environments)
