@@ -137,4 +137,4 @@ PyCharm needs to know the python executable to use as your interpreter. If you u
 * Use the file browser to navigate to e.g. `~/repos/dummy/.venv/bin/python`.
 * Click OK. PyCharm will now index your packages and after a minute or two your dependencies will be properly registered with the editor.
 
-If you used the name `.venv` or `venv` for your virtual environment directory, PyCharm will automatically exclude the directory from searching in your project. If you used a different naming scheme, you should right click on the directory in the project file view and select `Mark Directory as > Excluded`.
+If you used the name `.venv` or `venv` for your virtual environment directory, PyCharm will automatically exclude the directory from searching and refactoring in your project (you don't want a search and replace command to edit your dependency source code). If you used a different naming scheme, you should right click on the directory in the project file view and select `Mark Directory as > Excluded`.
