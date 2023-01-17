@@ -88,7 +88,7 @@ build-backend = "poetry.core.masonry.api"
     * We've specified a few "dev-dependencies" which are any additional dependencies that a _developer_ would need in order to contribute to your repository. These are typically packages like `pytest` for unit testing but could also include formatters and linters like `black`, `flake8`, etc. 
     * The section at the bottom is required by `poetry`.
     * Package versions have been specified by `>=, <, ^`. Refer to this [guide](https://python-poetry.org/docs/dependency-specification#dependency-specification) in `poetry` for more information about version specifiers.
-  *  We could have created this file automatically by running `poetry new dummy` frome the `~/repos` directory. However, this would have added a few extra directories and files by default and I think it's a good exercise to create this manually at least once. 
+  *  We could have created this file automatically by running `poetry new dummy` from the `~/repos` directory. However, this would have added a few extra directories and files by default and I think it's a good exercise to create this manually at least once. 
 
 ### Installing Python
 * First run `pyenv versions` to see which versions are installed. This will also display the system version. Let's pick Python version 3.9.15 for our installation.
