@@ -5,7 +5,19 @@ A coherent set of guidelines for Python versioning, virtual environment manageme
 When I first started working on Python projects I was overwhelmed by all of the different tools available for python installations, virtual environment management, and project dependency management. Part of the problem is the sheer number of tools available for each and the high degree of coupling between them. Their names are also very confusingly similar (e.g. `pyenv`, `pyenv-virtualenv`, `virtualenv', `venv`). I found it challenging to read about best practices for each of these topics in isolation without understanding if everything would be compatible in the end. Below I've laid out one pattern that has worked well for me across many different projects. I've tried to motivate my choices with comparisons to other tools. There are certainly other patterns that could be successful but I have not needed to stray from this one. 
 
 ## A few notes on virtual environments and project management
-Each project you work on should have a set of dependencies (other packages) needed to run/develop the software. For example, if I have a project that uses `numpy` to do some array manipulation, I will at a minimum need to install `numpy` and all of its dependencies in a space where my Python binary has access. In fact, if you have multiple branches on a given project, you may have multiple distinct sets of dependencies. For now, let's just focus on one project and one set of dependencies. It would become messy very quickly if we simply insalled all Python packages into one giant folder for all projects. In Python you cannot currently install two different versions of the same package alongside one another. This would prevent projeccts with conflicting version reuirements for any package. It would also be a nightmare to keep organized. A better system is to silo each set of dependencies into a "virtual environment". You can think of each virtual environment as a tiny bubble with its own Python binary and singular set of dependencies.   
+Each project you work on should have a set of dependencies (other packages) needed to run/develop the software. For example, if I have a project that uses `numpy` to do some array manipulation, I will, at a minimum, need to install `numpy` and all of its dependencies in a space where my Python binary has access. In fact, if you have multiple branches on a given project or you want to test different Python versions on the same project, you may have multiple distinct sets of dependencies. It would become messy very quickly if we simply insalled all of our projects' Python dependnecies into one giant folder. In Python you cannot install two different versions of the same package alongside one another. This would prevent projects with conflicting version reuirements from being installed. It would also be a nightmare to keep organized. A better system is to silo each distinct set of dependencies into a "virtual environment". You can think of each virtual environment as a tiny bubble with its own Python binary and singular set of dependencies. Note that virtual environments are "many to one" with respect to projects. One project may contain multiple virtual environments, however, no virtual environment should be used for more than one project.
+
+A set of projects and virtual environments might look like this in an abstract sense:
+
+Project A
+-Virtual environment A1
+-Virtual environment A2
+Project B
+-Virtual environment B
+Project C
+-Virtual environment C1
+-Virtual environment C2
+-Virtual environment C3
 
 ## The tools:
 * [`pyenv`](https://github.com/pyenv/pyenv): Used only for Python version installation and organization (**not** used for virtual environments)
