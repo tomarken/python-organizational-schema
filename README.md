@@ -19,7 +19,7 @@ A set of projects and virtual environments might look like this in an abstract s
   * Virtual environment C2
   * Virtual environment C3
 
-If you are just starting out, I would recommend only working with a single virtual environment per project until you have a better sense of your typical workflow. This is satisfactory for many projects and development flows. 
+If you are just starting out, I would recommend only working with a single virtual environment per project until you have a better sense of your typical workflow. This is satisfactory for many projects. 
 
 ## The tools:
 * [`pyenv`](https://github.com/pyenv/pyenv): Used only for Python version installation and organization (**not** used for virtual environments)
