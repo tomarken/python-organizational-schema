@@ -2,10 +2,10 @@
 A coherent set of guidelines for Python versioning, virtual environment management, and dependency management
 
 ## Motivation
-When I first started working on Python projects I was overwhelmed by all of the different tools available for python installations, virtual environment management, and project dependency management. Part of the problem is the sheer number of tools available for each and the high degree of coupling between them. Their names are also very confusingly similar (e.g. `pyenv`, `pyenv-virtualenv`, `virtualenv', `venv`). I found it challenging to read about best practices for each of these topics in isolation without understanding if everything would be compatible in the end. Below I've laid out one pattern that has worked well for me across many different projects. I've tried to motivate my choices with comparisons to other tools. There are certainly other patterns that could be successful but I have not needed to stray from this one. 
+When I first started working on Python projects I was overwhelmed by all of the different tools available for python installations, virtual environment management, and project dependency management. Part of the problem is the sheer number of tools available for each and the high degree of coupling between them. Their names are also very confusingly similar (e.g. `pyenv`, `pyenv-virtualenv`, `virtualenv', `venv`). I found it challenging to read about best practices for each of these topics in isolation without understanding if everything would be compatible in the end. Below I've laid out one pattern that has worked well for me across many different projects. I've tried to motivate my choices with comparisons to other tools. There are certainly other patterns that could be successful but I have not needed to stray from this one.
 
 ## A few notes on virtual environments and project management
-Each project you work on should have a set of dependencies (other packages) needed to run/develop the software. For example, if I have a project that uses `numpy` to do some array manipulation, I will, at a minimum, need to install `numpy` and all of its dependencies in a space where my Python binary has access. In fact, if you have multiple branches on a given project or you want to test different Python versions on the same project, you may have multiple distinct sets of dependencies. It would become messy very quickly if we simply insalled all of our projects' Python dependencies into one giant folder. In Python you cannot install two different versions of the same package alongside one another. This would prevent projects with conflicting version reuirements from being installed. It would also be a nightmare to keep organized. A better system is to silo each distinct set of dependencies into a "virtual environment". You can think of each virtual environment as a tiny bubble with its own Python binary and singular set of dependencies. Note that virtual environments are "many to one" with respect to projects. One project may contain multiple virtual environments, however, no virtual environment should be used for more than one project.
+Each project you work on should have a set of dependencies (other packages) needed to run/develop the software. For example, if I have a project that uses `numpy` to do some array manipulation, I will, at a minimum, need to install `numpy` and all of its dependencies in a space where my Python binary has access. In fact, if you have multiple branches on a given project or you want to test different Python versions on the same project, you may have multiple distinct sets of dependencies. It would become messy very quickly if we simply installed all of our projects' Python dependencies into one giant folder. In Python you cannot install two different versions of the same package alongside one another. This would prevent projects with conflicting version requirements from being installed. It would also be a nightmare to keep organized. A better system is to silo each distinct set of dependencies into a "virtual environment". You can think of each virtual environment as a tiny bubble with its own Python binary and singular set of dependencies. Note that virtual environments are "many to one" with respect to projects. One project may contain multiple virtual environments, however, no virtual environment should be used for more than one project.
 
 A set of projects and virtual environments might look like this in an abstract sense:
 
@@ -27,9 +27,9 @@ A set of projects and virtual environments might look like this in an abstract s
 
 ### Why did I choose these tools?
 * Why not use `conda`?
-  * Instead of `pyenv` and `venv`, I could have used one of the `conda` distributions instead. My major issue with `conda` is the location of the project dependencies.  `conda` places dependency source files in a relatiely obscure location like `/opt/miniconda/[env]/lib/[python-ver]/site-packages`. I prefer for these files to be located within the project like `[repo]/.venv/[python-ver]/site-packages`. This makes locating and referencing dependency source code much easier and it makes it clear which virtual environments should go with which project.
+  * Instead of `pyenv` and `venv`, I could have used one of the `conda` distributions instead. My major issue with `conda` is the location of the project dependencies.  `conda` places dependency source files in a relatively obscure location like `/opt/miniconda/[env]/lib/[python-ver]/site-packages`. I prefer for these files to be located within the project like `[repo]/.venv/[python-ver]/site-packages`. This makes locating and referencing dependency source code much easier and it makes it clear which virtual environments should go with which project.
   * Deleting virtual environments and Python versions is as simple as `rm -r .venv` or `rm -r ~/.pyenv/versions/[version]`. I don't need to remember the obscure `conda` directory, run any `conda` commands, or download `anaconda-clean`. 
-  * This allows for much easier virtual environment management. Imaging making multiple virtual environments with `conda` for several repos and then revisiting a project after several months. Your list of `conda` environments may be quite long and good luck remembering which environment goes with which project. Perhaps your naming scheme from a few months ago doens't make much sense. Perhaps some dummy environments are mixed in. Perhaps your projects have similar names and you were not specific enough. With the built-in module `venv` and choosing to install virtual environments inside the project directory, it's immediately obvious which environments correspond to the project. 
+  * This allows for much easier virtual environment management. Imagine making multiple virtual environments with `conda` for several repos and then revisiting a project after several months. Your list of `conda` environments may be quite long and good luck remembering which environment goes with which project. Perhaps your naming scheme from a few months ago doens't make much sense. Perhaps some dummy environments are mixed in. Perhaps your projects have similar names and you were not specific enough. With the built-in module `venv` and choosing to install virtual environments inside the project directory, it's immediately obvious which environments correspond to the project. 
 * Why not use `pyenv`'s plug-in `pyenv-virtualenv` to both manage python installations as well as virtual environments?
   * For starters, since Python 3.6 `pyenv` is no longer the officially recommended solution for virtual environment management. `venv` has taken its place and is officially maintained by the Python development team. I always prefer to use officially recommended packages whenever possible.
   * `pyenv` places virtual environments in `~/.pyenv/versions/[version]/envs/[env-name]` which is an improvement on `conda` but still not alongside the actual project. You cannot change the default installation location, you can only create a symlink which is not ideal and potentially confusing.
@@ -53,14 +53,15 @@ A set of projects and virtual environments might look like this in an abstract s
 
 ### `poetry`
 * Install with `curl -sSL https://install.python-poetry.org | python3 -`
-* By default this is installed on MacOS at `~/.local/bin/` which is by default on the `PATH`. However, if this is not already on your `PATH` (confirm with `echo $PATH`), you can add the following to your appropriate `rc` file: `export PATH="$HOME/.local/bin:$PATH" or replace `$HOME/.local/bin` with your actual installation location.
+* By default this is installed on MacOS at `~/.local/bin/` which is by default on the `PATH`. However, if this is not already on your `PATH` (confirm with `echo $PATH`), you can add the following to your appropriate `rc` file: `export PATH="$HOME/.local/bin:$PATH"` or replace `$HOME/.local/bin` with your actual installation location.
+* Test the installation with `poetry --version`.
 
 ## Putting everything into action
 ### Creating the `pyproject.toml` file
 * Let's make a new project called `dummy` by creating a directory in `~/repos/dummy`. 
-* We begin by generating a `pyproject.toml` file that will describe our project's dependencies. This file will almost certainly change as the project is built and new features are added. That is totally fine and the `pyproject.toml` file can even help us track the project version. 
-  * Navigate the project directory `~/repos/dummy`. 
-  * Create a file called `pyprojec.toml` and copy the following lines with appropriate modification:
+* We begin by generating a `pyproject.toml` file that will describe our project's dependencies. This file will almost certainly change as the project is built and new features are added. That is totally fine and the `pyproject.toml` file can even help us track the project version numbering. 
+  * Navigate to the project directory `~/repos/dummy`. 
+  * Create a file called `pyproject.toml` and copy the following lines with appropriate modification:
 ```toml
 [tool.poetry]
 name = "dummy"
@@ -81,42 +82,45 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 ```
   * Let's recap: 
-    * We've given our project a name and initial version number `0.1.0` as well as specified our name and email in the first section. 
+    * We've given our project a name and initial version number 0.1.0 as well as specified our name and email in the first section. 
     * We've specified that we want our project to support Python versions ranging from 3.9 to 3.10 (but not 3.11). 
     * We've specified a few project dependencies (`numpy` and `matplotlib`). Any dependency that a user would need in order to run your software should be here.
-    * We've specified a few "dev-dependencies" which are any dependencies that a _developer_ would need in order to contribute to your repository. These are typically packages like `pytest` for unit testing but could also include formatters and linters like `black`, `flake8`, etc. 
-    * The section at the bottom is reuired by `poetry`.
+    * We've specified a few "dev-dependencies" which are any additional dependencies that a _developer_ would need in order to contribute to your repository. These are typically packages like `pytest` for unit testing but could also include formatters and linters like `black`, `flake8`, etc. 
+    * The section at the bottom is required by `poetry`.
     * Package versions have been specified by `>=, <, ^`. Refer to this [guide](https://python-poetry.org/docs/dependency-specification#dependency-specification) in `poetry` for more information about version specifiers.
   *  We could have created this file automatically by running `poetry new dummy` frome the `~/repos` directory. However, this would have added a few extra directories and files by default and I think it's a good exercise to create this manually at least once. 
 
 ### Installing Python
 * First run `pyenv versions` to see which versions are installed. This will also display the system version. Let's pick Python version 3.9.15 for our installation.
 * Run `pyenv install 3.9.15`. 
-  * `pyenv` may take a few minutes to install the CPython binaries in `~/.pyenv/versions/3.9.14`.
- * Run `pyenv versions` to verify that `pyenv` has installed 3.9.15. The astirisk shows which version is active. You probably have `system` active.
+  * `pyenv` may take a few minutes to install the CPython binaries in `~/.pyenv/versions/3.9.15`.
+ * Run `pyenv versions` to verify that `pyenv` has installed 3.9.15. The asterisk shows which version is active. You probably have `system` active.
 
 ### Installing the virtual environment
 * Create a `pyenv` shell: `pyenv shell 3.9.15`. Now, everything you run will be using Python 3.9.15. 
-* Run `pyenv versions` to see the list again and make sure the astirisk indicates 3.9.15. Alternatively you can run `pyenv version`. 
+* Run `pyenv versions` to see the list again and make sure the asterisk indicates 3.9.15. Alternatively you can run `pyenv version`. 
 * Run `python3 -m venv .venv --prompt "dummy"`.
   * This uses the active Python version (3.9.15) and the module `venv` to create a virtual environment.
   * It will be located inside a folder called `.venv` (inside the main project directory). 
   * It will display the prompt "dummy" whenever this virtual environment is active.
-  * The general form of this command is `python3 -m venv [path/to/venv] --prompt [prompt]. The location and prompt can easily be modified to suit other needs. For example you could install two virtual environments alongside each other (perhaps `.venv-main` for the main branch of a project and `.venv-feature` for a feature branch).
+  * The general form of this command is `python3 -m venv [path/to/venv] --prompt [prompt]`. The location and prompt can easily be modified to suit other needs. For example you could install two virtual environments alongside each other (perhaps `.venv-main` for the main branch of a project and `.venv-feature` for a feature branch).
   * Run `ls -a` to see that a directory called `.venv` was installed. This is the location of the virtual environment. This contains the Python binaries and the location where the package dependencies will be installed `.venv/lib/python3.9/site-packages`.
 * Run `pyenv shell --unset` to deactivate the `pyenv` shell.
 * In order to activate the virtual environment run `source .venv/bin/activate` which runs the `activate` script. You should now see the prompt `(dummy)`. To deactivate at any time run `deactivate`. You will need to run these commands anytime you need to enter or exit the virtual environment.
 * For the next step, it's best to keep it activated. Technically it will still work either way since we used the name `.venv` but if we had chosen any other directory it would need to be activated.
 
 ### Creating the `poetry.lock` file
-We need `poetry` figure out which versions of Python, `numpy`, `matplotlib`, and `pytest` are compatible with one another. `poetry` does this by checking all of the individual depenencies for `numpy`, `matplotlib`, and `pytest` (along with the Python versions) recursively and determining the most up-to-date versions of each required package that satisfy all of the constraints listed in the `pyproject.toml`. For complex projects with lots of dependencies and for support of many Python versions, this can sometimes take several minutes or even hours. However, usually this can be sped up by narrowing the allowed versions of Python and placing reasonable constraints on package versions. 
+We need `poetry` to figure out which versions of Python, `numpy`, `matplotlib`, and `pytest` are compatible with one another. `poetry` does this by checking all of the individual depenencies for `numpy`, `matplotlib`, and `pytest` (along with the Python versions) recursively and determining the most up-to-date versions of each required package that satisfy all of the constraints listed in the `pyproject.toml`. For complex projects with lots of dependencies and for support of many Python versions, this can sometimes take several minutes or even hours. However, usually this can be sped up by narrowing the allowed versions of Python and placing reasonable constraints on package versions. 
 
-To create the lock file simply run `poetry lock`. This will likey version solve in a few seconds. If you'd like to see the details of what's goin on, you can run `poetry lock -vvv` instead to flag high verbosity. I almost always run with this option in order to see where `poetry` might be slow to version solve.
+To create the lock file simply run `poetry lock`. This will likey version solve in a few seconds. If you'd like to see the details of what's going on, you can run `poetry lock -vvv` to flag high verbosity. I almost always run with this option in case `poetry` gets hung due to network issues or because a set of dependencies is creating a slow bottleneck. Note that `poetry` will download and cache dependency source files in order to inspect their contents. This can be slow for large projects or with poor network speeds.
 
-`poetry` automatically determined that there was an active virtual environment. If we had not activated, we still would have succeeded because `poetry` knows to look for the directory `.venv`. However, if we had not used this convention (calling it `.venv-main` perhaps), we would need to activate or else `poetry` would create a virtual environment for us and store it in one of its library directories which is not what we want.  
+`poetry` automatically determined that there was an active virtual environment. If we had not activated it before running `poetry lock`, we still would have succeeded because `poetry` knows to look for the directory `.venv` (a standard convention). However, if we had not used this convention (calling it `.venv-main` perhaps), we would have needed to activate or else `poetry` would have created a virtual environment for us and stored it in one of its library directories which is not what we want.  
 
 ### Installing the repo
 Run `poetry install`. You should see the list of packages get installed. 
+
+### Iterating
+When your project requires new dependency specifications, update `pyprojec.toml` either manually or preferably using the `poetry` command `poetry add`. For example, to relax the `numpy` constrain from >=1.23 to >=1.22 you could run `poetry add "numpy>=1.22"` which would update `pyproject.toml`, `poetry.lock`, and install the changes. 
 
 ### Committing the dependency files
 In order to make sure that your project's dependencies and metadata are properly tracked, make sure to commit `pyproject.toml` and `poetry.lock` to your repo every time they are changed. When you make modifications to your project's main branch, you can increment the `version` field in the `pyproject.toml` field.
