@@ -126,3 +126,14 @@ When your project requires new dependency specifications, update `pyproject.toml
 
 ### Committing the dependency files
 In order to make sure that your project's dependencies and metadata are properly tracked, make sure to commit `pyproject.toml` and `poetry.lock` to your repo every time they are changed. When you make modifications to your project's main branch, you can increment the `version` field in the `pyproject.toml` field.
+
+## PyCharm support
+PyCharm needs to know the python executable to use as your interpreter. If you used the name `.venv` in your root project directory, it will automatically suggest the correct location. If it does not (or if you used a different directory for your virtual environment), follow these steps:
+* Open the project in PyCharm.
+* Open the main settings and select the `Project: [repo]` dropdown. Click the `Python Interpreter` option.
+* Click the settings wheel and select `Add`.
+* Make sure the left panel has selected `Virtualenv Environment`.
+* Click the `Existing environment` button.
+* Use hte file browser to navigate to e.g. `~/repos/dummy/.venv/bin/python`.
+* Click OK. PyCharm will now index your packages and after a minute or two your dependencies will be properly registered with the editor.
+
