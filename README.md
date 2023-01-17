@@ -122,7 +122,7 @@ To create the lock file simply run `poetry lock`. This will likey version solve 
 Run `poetry install`. You should see the list of packages get installed. 
 
 ### Iterating
-When your project requires new dependency specifications, update `pyprojec.toml` either manually or preferably using the `poetry` command `poetry add`. For example, to relax the `numpy` constrain from >=1.23 to >=1.22 you could run `poetry add "numpy>=1.22"` which would update `pyproject.toml`, `poetry.lock`, and install the changes. 
+When your project requires new dependency specifications, update `pyproject.toml` either manually or preferably using the `poetry` command `poetry add`. For example, to relax the `numpy` constrain from >=1.23 to >=1.22 you could run `poetry add "numpy>=1.22"` which would update `pyproject.toml`, `poetry.lock`, and install the changes. 
 
 ### Committing the dependency files
 In order to make sure that your project's dependencies and metadata are properly tracked, make sure to commit `pyproject.toml` and `poetry.lock` to your repo every time they are changed. When you make modifications to your project's main branch, you can increment the `version` field in the `pyproject.toml` field.
