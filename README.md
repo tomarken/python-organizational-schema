@@ -109,7 +109,7 @@ build-backend = "poetry.core.masonry.api"
   * Run `ls -a` to see that a directory called `.venv` was installed. This is the location of the virtual environment. This contains the Python binaries and the location where the package dependencies will be installed `.venv/lib/python3.9/site-packages`.
 * Run `pyenv shell --unset` to deactivate the `pyenv` shell.
 * In order to activate the virtual environment run `source .venv/bin/activate` which runs the `activate` script. You should now see the prompt `(dummy)`. To deactivate at any time run `deactivate`. You will need to run these commands anytime you need to enter or exit the virtual environment.
-* For the next step, it's best to keep it activated. Technically it will still work either way since we used the name `.venv` but if we had chosen any other directory it would need to be activated.
+* For the next step, it's best to keep it activated. Technically it will still work either way (explained below).
 
 ### Creating the `poetry.lock` file
 We need `poetry` to figure out which versions of Python, `numpy`, `matplotlib`, and `pytest` are compatible with one another. `poetry` does this by checking all of the individual depenencies for `numpy`, `matplotlib`, and `pytest` (along with the Python versions) recursively and determining the most up-to-date versions of each required package that satisfy all of the constraints listed in the `pyproject.toml`. For complex projects with lots of dependencies and for support of many Python versions, this can sometimes take several minutes or even hours. However, usually this can be sped up by narrowing the allowed versions of Python and placing reasonable constraints on package versions. 
