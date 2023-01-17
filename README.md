@@ -73,6 +73,35 @@ build-backend = "poetry.core.masonry.api"
     * The section at the bottom is reuired by `poetry`.
     * Package versions have been specified by `>=, <, ^`. Refer to this [guide](https://python-poetry.org/docs/dependency-specification#dependency-specification) in `poetry` for more information about version specifiers.
   *  We could have created this file automatically by running `poetry new dummy` frome the `~/repos` directory. However, this would have added a few extra directories and files by default and I think it's a good exercise to create this manually at least once. 
+
+### Installing Python
+* First run `pyenv versions` to see which versions are installed. This will also display the system version. Let's pick Python version 3.9.15 for our installation.
+* Run `pyenv install 3.9.15`. 
+  * `pyenv` may take a few minutes to install the CPython binaries in `~/.pyenv/versions/3.9.14`.
+ * Run `pyenv versions` to verify that `pyenv` has installed 3.9.15. The astirisk shows which version is active. You probably have `system` active.
+
+### Installing the virtual environment
+* Create a `pyenv` shell: `pyenv shell 3.9.15`. Now, everything you run will be using Python 3.9.15. 
+* Run `pyenv versions` to see the list again and make sure the astirisk indicates 3.9.15. Alternatively you can run `pyenv version`. 
+* Run `python3 -m venv .venv --prompt "dummy"`.
+  * This uses the active Python version (3.9.15) and the module `venv` to create a virtual environment.
+  * It will be located inside a folder called `.venv` (inside the main project directory). 
+  * It will display the prompt "dummy" whenever this virtual environment is active.
+  * The general form of this command is `python3 -m venv [path/to/venv] --prompt [prompt]. The location and prompt can easily be modified to suit other needs. For example you could install two virtual environments alongside each other (perhaps `.venv-main` for the main branch of a project and `.venv-feature` for a feature branch).
+  * Run `ls -a` to see that a directory called `.venv` was installed. This is the location of the virtual environment. This contains the Python binaries and the location where the package dependencies will be installed `.venv/lib/python3.9/site-packages`.
+* Run `pyenv shell --unset` to deactivate the `pyenv` shell.
+* In order to activate the virtual environment run `source .venv/bin/activate` which runs the `activate` script. You should now see the prompt `(dummy)`. To deactivate at any time run `deactivate`. You will need to run these commands anytime you need to enter or exit the virtual environment.
+* For the next step, it's best to keep it activated. Technically it will still work either way since we used the name `.venv` but if we had chosen any other directory it would need to be activated.
+
 ### Creating the `poetry.lock` file
-We need `poetry` figure out which versions of `numpy` and `matplotlib` are compatible with each other and whichever version of Python we install (which must be between 3.9-3.10 inclusive). `poetry` does this by checking all of the individual depenencies for `numpy`, `matplotlib`, and `pytest` recursively and determining the most up-to-date versions of each required package that satisfy all of the constraints listed in the `pyproject.toml`. For complex projects with lots of dependencies and for support of many Python versions, this can sometimes take several minutes or even hours. However, usually this can be spec up by narrowing allowed versions of Python and placing reasonable constraints on package versions. 
-  
+We need `poetry` figure out which versions of Python, `numpy`, `matplotlib`, and `pytest` are compatible with one another. `poetry` does this by checking all of the individual depenencies for `numpy`, `matplotlib`, and `pytest` (along with the Python versions) recursively and determining the most up-to-date versions of each required package that satisfy all of the constraints listed in the `pyproject.toml`. For complex projects with lots of dependencies and for support of many Python versions, this can sometimes take several minutes or even hours. However, usually this can be sped up by narrowing the allowed versions of Python and placing reasonable constraints on package versions. 
+
+To create the lock file simply run `poetry lock`. This will likey version solve in a few seconds. If you'd like to see the details of what's goin on, you can run `poetry lock -vvv` instead to flag high verbosity. I almost always run with this option in order to see where `poetry` might be slow to version solve.
+
+`poetry` automatically determined that there was an active virtual environment. If we had not activated, we still would have succeeded because `poetry` knows to look for the directory `.venv`. However, if we had not used this convention (calling it `.venv-main` perhaps), we would need to activate or else `poetry` would create a virtual environment for us and store it in one of its library directories which is not what we want.  
+
+### Installing the repo
+Run `poetry install`. You should see the list of packages get installed. 
+
+### Committing the dependency files
+In order to make sure that your project's dependencies and metadata are properly tracked, make sure to commit `pyproject.toml` and `poetry.lock` to your repo every time they are changed. When you make modifications to your project's main branch, you can increment the `version` field in the `pyproject.toml` field.
