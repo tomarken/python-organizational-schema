@@ -134,6 +134,6 @@ PyCharm needs to know the python executable to use as your interpreter. If you u
 * Click the settings wheel and select `Add`.
 * Make sure the left panel has selected `Virtualenv Environment`.
 * Click the `Existing environment` button.
-* Use hte file browser to navigate to e.g. `~/repos/dummy/.venv/bin/python`.
+* Use the file browser to navigate to e.g. `~/repos/dummy/.venv/bin/python`.
 * Click OK. PyCharm will now index your packages and after a minute or two your dependencies will be properly registered with the editor.
 
