@@ -29,7 +29,7 @@ If you are just starting out, I would recommend only working with a single virtu
 
 ### Why did I choose these tools?
 * Why not use `conda` for environment management?
-  * Instead of `pyenv` and `venv`, I could have used one of the `conda` distributions instead. The main issue with `conda` is that there's no association between your environment and your project beyond the naming scheme you come up with at environment creation time. Imagine making multiple virtual environments with `conda` for several repos and then revisiting a project after several months. Your list of `conda` environments may be quite long, and good luck remembering which environments go with which projects. Perhaps your naming scheme from a few months ago doens't make much sense. Perhaps some test environments are mixed in. Perhaps some projects have similar names and you were not specific enough. `venv` allows you to install virtual environments inside the project directory directly make it immediately obvious which environments correspond to which project.
+  * Instead of `pyenv` and `venv`, I could have used one of the `conda` distributions instead. One issue with `conda` is that there's no association between your environment and your project beyond the naming scheme you come up with at environment creation time. Imagine making multiple virtual environments with `conda` for several repos and then revisiting a project after several months. Your list of `conda` environments may be quite long, and good luck remembering which environments go with which projects. Perhaps your naming scheme from a few months ago doesn't make much sense. Perhaps some test environments are mixed in. Perhaps some projects have similar names and you were not specific enough. `venv` allows you to install virtual environments inside the project directory directly making it immediately obvious which environments correspond to which project.
   * Another aspect of `conda` that I dislike is that it places dependency source files in a relatively obscure location like `/opt/miniconda/[env]/lib/[python-ver]/site-packages`. I prefer for these files to be located within the project like `[repo]/.venv/[python-ver]/site-packages`. This makes locating and referencing dependency source code much easier. Though this doesn't make a huge difference inside a well configured IDE, I still occasionally need to reference source code at the command line, and I prefer not having to remember an obscure file location.
   * A corollary is that deleting virtual environments and Python versions is as simple as `rm -r .venv` or `rm -r ~/.pyenv/versions/[version]`. I don't need to remember the obscure `conda` directory, run any `conda` commands, or download `anaconda-clean`. 
 * Why not use `pyenv`'s plug-in `pyenv-virtualenv` to both manage Python installations as well as virtual environments?
@@ -38,7 +38,7 @@ If you are just starting out, I would recommend only working with a single virtu
 * Why not use `pip` or `conda` to install project dependencies instead of `poetry`?
   * The advantage of using `poetry` is that `poetry` will automatically determine the most up-to-date package versions that don't conflict with the user constraints specified in a `pyproject.toml` file. 
   * The generation of a `poetry.lock` file makes installation completely deterministic for other users. There is some burden placed on the developer to make sure `poetry` resolves its dependencies nicely. This can sometimes take a long time for certain corner cases, but generally this works quite well. `pip` installing everything is certainly easier but it may cause package version conflicts and installation by different users may not be identical. 
-  * `conda` cannot install packages from the official Python Package Index (PyPI) directly. By default `conda` uses its own Anaconda package repository which I find to be bad default behavior. `poetry` by default looks to PyPI for installation. Both can be easily configured to point towards private or other package indices, however, only `poetry` can achieve this from within the `pyproject.toml` file which has become the standard configuration file for Python projects.
+  * `conda` cannot install packages from the official Python Package Index (PyPI) directly. By default `conda` uses its own Anaconda package index which I find to be bad default behavior. `poetry` by default looks to PyPI for installation. Both tools can be easily configured to point towards private or other package indices, however, only `poetry` can achieve this from within the `pyproject.toml` file which has [become](https://peps.python.org/pep-0518/) the standard configuration file for Python projects. For `conda` you'll need to configure a separate `.condarc` file.
  * Publishing projects with `poetry`
    * Building and publishing projects to PyPI is incredibly easy with `poetry`. After a basic configuration, `poetry build` and `poetry publish` are all that's needed to push your personal projects to PyPI. 
 
@@ -52,7 +52,7 @@ If you are just starting out, I would recommend only working with a single virtu
 
 ### `pyenv`
 * Install with `homebrew`: `brew update` and `brew install`. 
-* Add the following to your approopriate shell `rc` file. For MacOS it is likely `~/.zshrc` if you use the default `Zsh`. It may be `~/.bashrc` if you use `bash`:
+* Add the following to your appropriate shell `rc` file. For MacOS it is likely `~/.zshrc` if you use the default `Zsh`. It may be `~/.bashrc` if you use `bash`:
   * `export PYENV_ROOT="$HOME/.pyenv"`
   * `export PATH="$PYENV_ROOT/bin:$PATH"`
   * `eval "$(pyenv init -)"`
@@ -121,9 +121,9 @@ build-backend = "poetry.core.masonry.api"
 * For the next step, it's best to keep it activated. Technically it will still work either way (explained below).
 
 ### Creating the `poetry.lock` file
-We need `poetry` to figure out which versions of Python, `numpy`, `matplotlib`, and `pytest` are compatible with one another. `poetry` does this by checking all of the individual depenencies for `numpy`, `matplotlib`, and `pytest` (along with the Python versions) recursively and determining the most up-to-date versions of each required package that satisfy all of the constraints listed in the `pyproject.toml`. For complex projects with lots of dependencies and for support of many Python versions, this can sometimes take several minutes or even hours. However, usually this can be sped up by narrowing the allowed versions of Python and placing reasonable constraints on package versions. 
+We need `poetry` to figure out which versions of Python, `numpy`, `matplotlib`, and `pytest` are compatible with one another. `poetry` does this by checking all of the individual dependencies for `numpy`, `matplotlib`, and `pytest` (along with the Python versions) recursively and determining the most up-to-date versions of each required package that satisfy all of the constraints listed in the `pyproject.toml`. For complex projects with lots of dependencies and for support of many Python versions, this can sometimes take several minutes or even hours. However, usually this can be sped up by narrowing the allowed versions of Python and placing reasonable constraints on package versions. 
 
-To create the lock file simply run `poetry lock`. This will likey version solve in a few seconds. If you'd like to see the details of what's going on, you can run `poetry lock -vvv` to flag high verbosity. I almost always run with this option in case `poetry` gets hung due to network issues or because a set of dependencies is creating a slow bottleneck. Note that `poetry` will download and cache dependency source files in order to inspect their contents. This can be slow for large projects or with poor network speeds.
+To create the lock file simply run `poetry lock`. This will likely version solve in a few seconds. If you'd like to see the details of what's going on, you can run `poetry lock -vvv` to flag high verbosity. I almost always run with this option in case `poetry` gets hung due to network issues or because a set of dependencies is creating a slow bottleneck. Note that `poetry` will download and cache dependency source files in order to inspect their contents. This can be slow for large projects or with poor network speeds.
 
 `poetry` automatically determined that there was an active virtual environment. If we had not activated it before running `poetry lock`, we still would have succeeded because `poetry` knows to look for the directory `.venv` (a standard convention). However, if we had not used this convention (calling it `.venv-main` perhaps), we would have needed to activate or else `poetry` would have created a virtual environment for us and stored it in one of its library directories which is not what we want.  
 
@@ -147,3 +147,20 @@ PyCharm needs to know the python executable to use as your interpreter. If you u
 * Click OK. PyCharm will now index your packages and after a minute or two your dependencies will be properly registered with the editor.
 
 If you used the name `.venv` or `venv` for your virtual environment directory, PyCharm will automatically exclude the directory from searching and refactoring in your project (you don't want a search and replace command to edit your dependency source code). If you used a different naming scheme, you should right click on the directory in the project file view and select `Mark Directory as > Excluded`.
+
+## Bonus: Using `conda` and `poetry` together
+Some Python projects require non-Python dependencies. In this situation, `conda` can be used to handle the environment and non-Python dependencies but `poetry`'s rich features can still be utilized for the Python dependencies. 
+
+* Install `Miniconda` using official [instructions](https://docs.conda.io/en/latest/miniconda.html).
+* Create an environment YAML file `environment.yml`.
+```yaml
+name: dummy
+dependencies:
+  - python 3.9.15
+  - postgresql
+```
+* Create the conda environment: `conda env create -f environment.yml`.
+* Activate the environment with `conda activate dummy`.
+* Make a `pyproject.toml` file as described before. This should contain all of the Python dependencies. Make sure the Python version specifications in the `environment.yml` and `pyproject.toml` files are compatible. 
+* Create the `poetry.lock` file with `poetry lock`.
+* Install the Python dependencies with `poetry install`.
