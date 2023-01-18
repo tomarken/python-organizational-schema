@@ -28,26 +28,35 @@ If you are just starting out, I would recommend only working with a single virtu
 * [`pyproject.toml`](https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/) and [`poetry.lock`](https://python-poetry.org/docs/libraries#lock-file) files are the "source of truth" for the project
 
 ### Why did I choose these tools?
-* Why not use `conda`?
-  * Instead of `pyenv` and `venv`, I could have used one of the `conda` distributions instead. My major issue with `conda` is the location of the project dependencies.  `conda` places dependency source files in a relatively obscure location like `/opt/miniconda/[env]/lib/[python-ver]/site-packages`. I prefer for these files to be located within the project like `[repo]/.venv/[python-ver]/site-packages`. This makes locating and referencing dependency source code much easier and it makes it clear which virtual environments should go with which project.
-  * Deleting virtual environments and Python versions is as simple as `rm -r .venv` or `rm -r ~/.pyenv/versions/[version]`. I don't need to remember the obscure `conda` directory, run any `conda` commands, or download `anaconda-clean`. 
-  * This allows for much easier virtual environment management. Imagine making multiple virtual environments with `conda` for several repos and then revisiting a project after several months. Your list of `conda` environments may be quite long and good luck remembering which environment goes with which project. Perhaps your naming scheme from a few months ago doens't make much sense. Perhaps some dummy environments are mixed in. Perhaps your projects have similar names and you were not specific enough. With the built-in module `venv` and choosing to install virtual environments inside the project directory, it's immediately obvious which environments correspond to the project. 
+* Why not use `conda` for environment management?
+  * Instead of `pyenv` and `venv`, I could have used one of the `conda` distributions instead. The main issue with `conda` is that there's no association between your environment and your project beyond the naming scheme you come up with at environment creation time. Imagine making multiple virtual environments with `conda` for several repos and then revisiting a project after several months. Your list of `conda` environments may be quite long, and good luck remembering which environments go with which projects. Perhaps your naming scheme from a few months ago doens't make much sense. Perhaps some test environments are mixed in. Perhaps some projects have similar names and you were not specific enough. `venv` allows you to install virtual environments inside the project directory directly make it immediately obvious which environments correspond to which project.
+  * Another aspect of `conda` that I dislike is that it places dependency source files in a relatively obscure location like `/opt/miniconda/[env]/lib/[python-ver]/site-packages`. I prefer for these files to be located within the project like `[repo]/.venv/[python-ver]/site-packages`. This makes locating and referencing dependency source code much easier. Though this doesn't make a huge difference inside a well configured IDE, I still occasionally need to reference source code at the command line, and I prefer not having to remember an obscure file location.
+  * A corollary is that deleting virtual environments and Python versions is as simple as `rm -r .venv` or `rm -r ~/.pyenv/versions/[version]`. I don't need to remember the obscure `conda` directory, run any `conda` commands, or download `anaconda-clean`. 
 * Why not use `pyenv`'s plug-in `pyenv-virtualenv` to both manage Python installations as well as virtual environments?
   * For starters, since Python 3.6 `pyenv` is no longer the officially recommended solution for virtual environment management. `venv` has taken its place and is officially maintained by the Python development team. I always prefer to use officially recommended packages whenever possible.
   * `pyenv` places virtual environments in `~/.pyenv/versions/[version]/envs/[env-name]` which is an improvement on `conda` but still not alongside the actual project. You cannot change the default installation location, you can only create a symlink which is not ideal and potentially confusing.
-* Why not use `pip` to install project dependencies instead of `poetry`?
+* Why not use `pip` or `conda` to install project dependencies instead of `poetry`?
   * The advantage of using `poetry` is that `poetry` will automatically determine the most up-to-date package versions that don't conflict with the user constraints specified in a `pyproject.toml` file. 
   * The generation of a `poetry.lock` file makes installation completely deterministic for other users. There is some burden placed on the developer to make sure `poetry` resolves its dependencies nicely. This can sometimes take a long time for certain corner cases, but generally this works quite well. `pip` installing everything is certainly easier but it may cause package version conflicts and installation by different users may not be identical. 
+  * `conda` cannot install packages from the official Python Package Index (PyPI) directly. By default `conda` uses its own Anaconda package repository which I find to be bad default behavior. `poetry` by default looks to PyPI for installation. Both can be easily configured to point towards private or other package indices, however, only `poetry` can achieve this from within the `pyproject.toml` file which has become the standard configuration file for Python projects.
+ * Publishing projects with `poetry`
+   * Building and publishing projects to PyPI is incredibly easy with `poetry`. After a basic configuration, `poetry build` and `poetry publish` are all that's needed to push your personal projects to PyPI. 
+
+### Shortcomings of this approach
+* Installing packages with non-Python content
+  * `poetry` can only install Python-based packages. If a project has dependencies outside of Python (e.g. `PostgreSQL`), `conda` (or something equivalently general) is required to install at least those packages. In this situation, it is ideal to create and manage the environment with `conda`. It is best to pin all of the non-Python dependencies into a YAML environment file for deterministic builds with `conda`. All of the Python dependencies can still be managed and installed with `poetry`. These dependencies should still be placed into a `pyproject.toml` file and a lock file can be generated as described below. `poetry` is fully compatible with virtual environments created by `venv` and `conda`.
+* Popularity of `conda`
+  * Anaconda and Miniconda are extremely popular, particularly with beginner Python users and in academic settings. In a collaborative environment with many people already using `conda`, it may be difficult to convince others to switch to superior tools if they don't know what they're missing. I hope that this writeup can help bridge that gap.
 
 ## Installation
 
 ### `pyenv`
 * Install with `homebrew`: `brew update` and `brew install`. 
-* Add the following to your approopriate shell `rc` file. For MacOS it is likely `~/.zshrc` if you use `Zsh` (default) or `~/.bashrc` if you use `bash`:
+* Add the following to your approopriate shell `rc` file. For MacOS it is likely `~/.zshrc` if you use the default `Zsh`. It may be `~/.bashrc` if you use `bash`:
   * `export PYENV_ROOT="$HOME/.pyenv"`
   * `export PATH="$PYENV_ROOT/bin:$PATH"`
   * `eval "$(pyenv init -)"`
-* Source your new `rc` file. With `Zsh`, run `source ~/.zshrc`. 
+* Source your new `rc` file: `source ~/.zshrc`. 
 * Test your `pyenv` installation with: `pyenv --version`
 
 ### `venv`
